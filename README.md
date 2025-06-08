@@ -1,7 +1,7 @@
 # HEMI-LAB ULTRA++
 
-🧠 Real-Time GPU-Accelerated Brainwave Entrainment Platform  
-🎧 Scientific Binaural & Monaural Audio Synthesis in the Browser  
+🧠 Real-Time GPU-Accelerated Brainwave Entrainment Platform
+🎧 Scientific Binaural & Monaural Audio Synthesis in the Browser
 🚀 Modular. Expandable. Consciousness-Altering.
 
 ---
@@ -63,7 +63,10 @@ source hemi_env/bin/activate  # On Windows: hemi_env\Scripts\activate
 pip install -r requirements.txt
 
 # Launch the backend
-python backend/server.py
+python server.py
 
-# Open frontend in browser
-# Navigate to http://localhost:8000 (served via simple HTTP server or Flask)
+# In a separate terminal, serve the frontend
+cd www && python -m http.server 8000
+```
+
+Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency and mode.
