@@ -4,19 +4,108 @@
   <meta charset="UTF-8" />
   <title>Hemi-Lab ULTRA++</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #222;
+    }
+    .header {
+      background: #454ade;
+      color: #fff;
+      padding: 24px 0 12px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(69,74,222,0.1);
+    }
+    .container {
+      max-width: 500px;
+      background: #fff;
+      margin: 40px auto 0 auto;
+      padding: 32px 24px 24px 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(69,74,222,0.08);
+    }
+    label {
+      display: block;
+      margin-bottom: 16px;
+      font-size: 1.1em;
+    }
+    input, select {
+      margin-left: 8px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus, select:focus {
+      border: 1.5px solid #454ade;
+    }
+    #connect {
+      display: block;
+      margin: 22px 0 12px 0;
+      padding: 10px 30px;
+      background: #454ade;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #connect:hover {
+      background: #2c2fa5;
+    }
+    .status {
+      height: 24px;
+      color: #454ade;
+      font-weight: bold;
+      margin-bottom: 10px;
+      min-height: 1em;
+    }
+    #scope {
+      display: block;
+      margin: 24px auto 0 auto;
+      background: #e9eaf6;
+      border-radius: 10px;
+      border: 1px solid #d2d5ef;
+    }
   </style>
 </head>
 <body>
-  <h1>Hemi-Lab ULTRA++</h1>
-  <label>Carrier <input id="carrier" type="number" value="400" step="1"></label>
-  <label>Beat <input id="beat" type="number" value="10" step="0.1"></label>
-  <select id="mode">
-    <option value="binaural">Binaural</option>
-    <option value="monaural">Monaural</option>
-  </select>
-  <button id="connect">Connect</button>
-  <canvas id="scope" width="600" height="200"></canvas>
+  <div class="header">
+    <h1>Hemi-Lab ULTRA++</h1>
+    <p>Brainwave Synchronization Laboratory</p>
+  </div>
+  <div class="container">
+    <label>Carrier Frequency (Hz)
+      <input id="carrier" type="number" value="400" min="1" max="2000" step="1">
+    </label>
+    <label>Beat Frequency (Hz)
+      <input id="beat" type="number" value="10" min="0.1" max="40" step="0.1">
+    </label>
+    <label>Mode
+      <select id="mode">
+        <option value="binaural">Binaural</option>
+        <option value="monaural">Monaural</option>
+      </select>
+    </label>
+    <button id="connect">Connect</button>
+    <div class="status" id="status"></div>
+    <canvas id="scope" width="600" height="200"></canvas>
+  </div>
   <script src="app.js"></script>
+  <script>
+    // Example: Feedback for "Connect" button
+    const connectBtn = document.getElementById('connect');
+    const statusDiv = document.getElementById('status');
+    connectBtn.addEventListener('click', () => {
+      statusDiv.textContent = "Connecting...";
+      setTimeout(() => {
+        statusDiv.textContent = "Connected! Audio started.";
+      }, 800);
+    });
+  </script>
 </body>
 </html>
