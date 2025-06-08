@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hemi-Lab ULTRA++</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Hemi-Lab ULTRA++</h1>
+  <label>Carrier <input id="carrier" type="number" value="400" step="1"></label>
+  <label>Beat <input id="beat" type="number" value="10" step="0.1"></label>
+  <select id="mode">
+    <option value="binaural">Binaural</option>
+    <option value="monaural">Monaural</option>
+  </select>
+  <button id="connect">Connect</button>
+  <canvas id="scope" width="600" height="200"></canvas>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+import numpy as np
+
+try:
+    import cupy as cp
+    gpu_available = True
+except ImportError:  # fallback to numpy
+    cp = np
+    gpu_available = False
+
+
+class BeatGenerator:
+    """Generate binaural or monaural beats using GPU if available."""
+
+    def __init__(self, sample_rate=48000, block_size=2048, device='gpu'):
+        self.sample_rate = sample_rate
+        self.block_size = block_size
+        self.device = device if gpu_available and device == 'gpu' else 'cpu'
+        self.phase_left = 0.0
+        self.phase_right = 0.0
+
+    def _xp(self):
+        return cp if self.device == 'gpu' else np
+
+    def generate(self, carrier=400.0, beat=10.0, mode='binaural'):
+        """Generate a block of audio samples."""
+        xp = self._xp()
+        t = xp.arange(self.block_size, dtype=xp.float64) / self.sample_rate
+
+        if mode == 'binaural':
+            left_freq = carrier - beat / 2.0
+            right_freq = carrier + beat / 2.0
+        else:  # monaural
+            left_freq = right_freq = carrier
+
+        phase_inc_left = 2 * xp.pi * left_freq / self.sample_rate
+        phase_inc_right = 2 * xp.pi * right_freq / self.sample_rate
+
+        phase_vec_left = self.phase_left + phase_inc_left * xp.arange(self.block_size, dtype=xp.float64)
+        phase_vec_right = self.phase_right + phase_inc_right * xp.arange(self.block_size, dtype=xp.float64)
+
+        left = xp.sin(phase_vec_left)
+        right = xp.sin(phase_vec_right)
+
+        # update phase for continuity
+        self.phase_left = float((phase_vec_left[-1] + phase_inc_left) % (2 * xp.pi))
+        self.phase_right = float((phase_vec_right[-1] + phase_inc_right) % (2 * xp.pi))
+
+        if mode == 'monaural':
+            mono = (left + right) * 0.5
+            return xp.stack([mono, mono])
+        return xp.stack([left, right])
