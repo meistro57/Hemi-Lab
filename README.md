@@ -73,3 +73,19 @@ cd www && python -m http.server 8000
 ```
 
 Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency and mode.
+
+### Quick Ubuntu Setup
+
+A helper script is available to streamline installation on Ubuntu systems:
+
+```bash
+./install_ubuntu.sh
+```
+
+The script installs required system packages, creates a Python virtual environment and installs all Python dependencies. After it finishes, activate the environment and run the server:
+
+```bash
+source hemi_env/bin/activate
+python server.py
+```
+
