@@ -18,6 +18,11 @@ async function start() {
 
   sendParams();
   setInterval(sendParams, 1000);
+
+  const btn = document.getElementById('connect');
+  if (btn) {
+    btn.textContent = 'Playing';
+  }
 }
 
 function sendParams() {
