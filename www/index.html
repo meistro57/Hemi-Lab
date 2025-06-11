@@ -4,72 +4,67 @@
   <meta charset="UTF-8" />
   <title>Hemi-Lab ULTRA++</title>
   <style>
+    /* Simple Winamp inspired look */
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: Tahoma, sans-serif;
       margin: 0;
-      background: #f5f7fa;
-      color: #222;
+      background: #000;
+      color: #eee;
     }
     .header {
-      background: #454ade;
-      color: #fff;
-      padding: 24px 0 12px 0;
+      background: linear-gradient(#424242, #1c1c1c);
+      color: #ffcc00;
+      padding: 6px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(69,74,222,0.1);
+      font-weight: bold;
+      border-bottom: 2px solid #000;
     }
     .container {
-      max-width: 500px;
-      background: #fff;
-      margin: 40px auto 0 auto;
-      padding: 32px 24px 24px 24px;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(69,74,222,0.08);
+      width: 320px;
+      background: #2b2b2b;
+      margin: 40px auto;
+      padding: 12px;
+      border: 2px solid #000;
+      border-radius: 4px;
+      box-shadow: inset 0 0 4px #000;
     }
     label {
-      display: block;
-      margin-bottom: 16px;
-      font-size: 1.1em;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9em;
     }
-    input, select {
-      margin-left: 8px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      outline: none;
-      transition: border 0.2s;
-    }
-    input:focus, select:focus {
-      border: 1.5px solid #454ade;
+    input,
+    select {
+      background: #000;
+      color: #ffcc00;
+      border: 1px solid #555;
+      border-radius: 2px;
+      padding: 2px 4px;
+      width: 80px;
     }
     #connect {
       display: block;
-      margin: 22px 0 12px 0;
-      padding: 10px 30px;
-      background: #454ade;
+      margin: 10px auto;
+      padding: 4px 20px;
+      background: linear-gradient(#4d4d4d, #2b2b2b);
       color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 1.1em;
+      border: 1px solid #111;
+      border-radius: 2px;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-    #connect:hover {
-      background: #2c2fa5;
     }
     .status {
-      height: 24px;
-      color: #454ade;
-      font-weight: bold;
-      margin-bottom: 10px;
+      color: #ffcc00;
+      height: 20px;
+      text-align: center;
+      margin-top: 4px;
       min-height: 1em;
     }
     #scope {
       display: block;
-      margin: 24px auto 0 auto;
-      background: #e9eaf6;
-      border-radius: 10px;
-      border: 1px solid #d2d5ef;
+      margin: 12px auto 0 auto;
+      background: #000;
+      border: 1px solid #555;
     }
   </style>
 </head>
@@ -91,19 +86,19 @@
         <option value="monaural">Monaural</option>
       </select>
     </label>
-    <button id="connect">Connect</button>
+    <button id="connect">Play</button>
     <div class="status" id="status"></div>
     <canvas id="scope" width="600" height="200"></canvas>
   </div>
   <script src="app.js"></script>
   <script>
-    // Example: Feedback for "Connect" button
+    // Basic feedback for play button
     const connectBtn = document.getElementById('connect');
     const statusDiv = document.getElementById('status');
     connectBtn.addEventListener('click', () => {
       statusDiv.textContent = "Connecting...";
       setTimeout(() => {
-        statusDiv.textContent = "Connected! Audio started.";
+        statusDiv.textContent = "Playing...";
       }, 800);
     });
   </script>
