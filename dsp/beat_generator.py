@@ -21,8 +21,20 @@ class BeatGenerator:
     def _xp(self):
         return cp if self.device == 'gpu' else np
 
-    def generate(self, carrier=400.0, beat=10.0, mode='binaural'):
-        """Generate a block of audio samples."""
+    def generate(self, carrier=400.0, beat=10.0, mode='binaural', phase_shift=0.0):
+        """Generate a block of audio samples.
+
+        Parameters
+        ----------
+        carrier : float
+            Base carrier frequency in Hz.
+        beat : float
+            Binaural/monaural beat frequency in Hz.
+        mode : str
+            Either ``'binaural'`` or ``'monaural'``.
+        phase_shift : float
+            Relative phase shift between left and right channels in degrees.
+        """
         xp = self._xp()
         t = xp.arange(self.block_size, dtype=xp.float64) / self.sample_rate
 
@@ -35,15 +47,19 @@ class BeatGenerator:
         phase_inc_left = 2 * xp.pi * left_freq / self.sample_rate
         phase_inc_right = 2 * xp.pi * right_freq / self.sample_rate
 
+        phase_shift_rad = xp.deg2rad(phase_shift)
+
+        base_right = self.phase_right + phase_inc_right * xp.arange(self.block_size, dtype=xp.float64)
         phase_vec_left = self.phase_left + phase_inc_left * xp.arange(self.block_size, dtype=xp.float64)
-        phase_vec_right = self.phase_right + phase_inc_right * xp.arange(self.block_size, dtype=xp.float64)
+        phase_vec_right = base_right + phase_shift_rad
 
         left = xp.sin(phase_vec_left)
         right = xp.sin(phase_vec_right)
 
         # update phase for continuity
         self.phase_left = float((phase_vec_left[-1] + phase_inc_left) % (2 * xp.pi))
-        self.phase_right = float((phase_vec_right[-1] + phase_inc_right) % (2 * xp.pi))
+        next_right = (base_right[-1] + phase_inc_right) % (2 * xp.pi)
+        self.phase_right = float(next_right)
 
         if mode == 'monaural':
             mono = (left + right) * 0.5

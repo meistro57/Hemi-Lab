@@ -18,7 +18,7 @@
 - 🔊 Real-time Web Audio playback using `AudioWorklet`
 - ⚡ WebSocket-powered DSP backend in Python (CUDA with PyTorch or CuPy)
 - 🧪 Full EEG-band targeting: Delta, Theta, Alpha, Beta, Gamma
-- 🎛️ Adjustable carriers, beat frequencies, sweep ranges, and phase offsets
+ - 🎛️ Adjustable carriers, beat frequencies, sweep ranges, and channel phase offsets
 - 🧬 Modular architecture ready for future EEG feedback integration
 - 🧠 Experimental **resonance feedback AI agent** (coming soon)
 - 🌐 Cross-platform UI in-browser (works on Linux/Windows/macOS)
@@ -72,7 +72,7 @@ python server.py --test-sweep
 cd www && python -m http.server 8000
 ```
 
-Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency and mode.
+Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency, phase shift and mode.
 
 ### Quick Ubuntu Setup
 

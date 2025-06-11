@@ -37,6 +37,9 @@ def validate_params(params):
     if not (0.1 <= params.get('beat', 10.0) <= 30.0):
         print("Beat frequency out of range. Setting to default (10.0).")
         params['beat'] = 10.0
+    if not (0.0 <= params.get('phase_shift', 0.0) <= 360.0):
+        print("Phase shift out of range. Setting to default (0.0).")
+        params['phase_shift'] = 0.0
     # You may add more param validation as needed
 
 def play_test_sweep(duration=5.0, start=200.0, end=800.0):
@@ -50,7 +53,12 @@ def play_test_sweep(duration=5.0, start=200.0, end=800.0):
 
 async def audio_stream(websocket):
     generator = BeatGenerator(sample_rate=SAMPLE_RATE, block_size=BLOCK_SIZE)
-    params = {'carrier': 400.0, 'beat': 10.0, 'mode': 'binaural'}
+    params = {
+        'carrier': 400.0,
+        'beat': 10.0,
+        'mode': 'binaural',
+        'phase_shift': 0.0,
+    }
 
     async def recv_loop():
         async for msg in websocket:
