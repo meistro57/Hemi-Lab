@@ -1,3 +1,4 @@
 websockets
 numpy
 cupy-cuda12x; platform_system=="Linux"
+simpleaudio

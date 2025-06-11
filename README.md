@@ -65,6 +65,9 @@ pip install -r requirements.txt
 # Launch the backend
 python server.py
 
+# Play a quick frequency sweep for testing
+python server.py --test-sweep
+
 # In a separate terminal, serve the frontend
 cd www && python -m http.server 8000
 ```

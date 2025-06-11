@@ -7,6 +7,9 @@ import asyncio
 import json
 import struct
 import websockets
+import argparse
+import numpy as np
+import simpleaudio as sa
 # import ssl  # Uncomment if using SSL/TLS
 
 from dsp.beat_generator import BeatGenerator
@@ -35,6 +38,15 @@ def validate_params(params):
         print("Beat frequency out of range. Setting to default (10.0).")
         params['beat'] = 10.0
     # You may add more param validation as needed
+
+def play_test_sweep(duration=5.0, start=200.0, end=800.0):
+    """Play a short frequency sweep for quick audio testing."""
+    t = np.linspace(0, duration, int(SAMPLE_RATE * duration), endpoint=False)
+    freqs = np.linspace(start, end, t.size)
+    wave = np.sin(2 * np.pi * freqs * t)
+    stereo = np.stack([wave, wave], axis=1)
+    audio = (stereo * 32767).astype(np.int16)
+    sa.play_buffer(audio, 2, 2, SAMPLE_RATE).wait_done()
 
 async def audio_stream(websocket):
     generator = BeatGenerator(sample_rate=SAMPLE_RATE, block_size=BLOCK_SIZE)
@@ -92,7 +104,17 @@ async def main(host='0.0.0.0', port=8765):
         await asyncio.Future()
 
 if __name__ == '__main__':
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("Server shutting down...")
+    parser = argparse.ArgumentParser(description="Hemi-Lab ULTRA++ Server")
+    parser.add_argument('--host', default='0.0.0.0', help='Bind address')
+    parser.add_argument('--port', type=int, default=8765, help='WebSocket port')
+    parser.add_argument('--test-sweep', action='store_true',
+                        help='Play a sample sweep and exit')
+    args = parser.parse_args()
+
+    if args.test_sweep:
+        play_test_sweep()
+    else:
+        try:
+            asyncio.run(main(host=args.host, port=args.port))
+        except KeyboardInterrupt:
+            print("Server shutting down...")
