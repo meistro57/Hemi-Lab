@@ -28,8 +28,9 @@ async function start() {
 function sendParams() {
   const carrier = parseFloat(document.getElementById('carrier').value);
   const beat = parseFloat(document.getElementById('beat').value);
+  const phase = parseFloat(document.getElementById('phase').value);
   const mode = document.getElementById('mode').value;
-  socket.send(JSON.stringify({ carrier, beat, mode }));
+  socket.send(JSON.stringify({ carrier, beat, phase_shift: phase, mode }));
 }
 
 document.getElementById('connect').onclick = () => start();
