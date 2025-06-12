@@ -44,7 +44,7 @@
 ### Prerequisites
 
 - Python 3.10+
-- Node.js (optional, for frontend tooling)
+- Node.js (optional, for frontend tooling; install separately if needed)
 - Modern browser (Chrome/Edge/Firefox)
 - CUDA-enabled GPU recommended (NVIDIA)
 
@@ -82,7 +82,7 @@ A helper script is available to streamline installation on Ubuntu systems:
 ./install_ubuntu.sh
 ```
 
-The script installs required system packages, creates a Python virtual environment and installs all Python dependencies. After it finishes, activate the environment and run the server:
+The script installs required system packages, creates a Python virtual environment and installs all Python dependencies. It does not install Node.js; install it separately if you need frontend tooling. After the script finishes, activate the environment and run the server:
 
 ```bash
 source hemi_env/bin/activate
