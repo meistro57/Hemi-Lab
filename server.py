@@ -13,6 +13,7 @@ import simpleaudio as sa
 import http.server
 import threading
 import functools
+import os
 # import ssl  # Uncomment if using SSL/TLS
 
 from dsp.beat_generator import BeatGenerator
@@ -56,13 +57,18 @@ def play_test_sweep(duration=5.0, start=200.0, end=800.0):
 
 def start_static_server(port=8000, directory="www"):
     """Launch a simple HTTP server to host the frontend."""
+    # Resolve directory relative to this file so server works when launched
+    # from other working directories.
+    directory = os.path.join(os.path.dirname(__file__), directory)
     handler = functools.partial(
         http.server.SimpleHTTPRequestHandler, directory=directory
     )
     httpd = http.server.ThreadingHTTPServer(("0.0.0.0", port), handler)
     thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     thread.start()
-    print(f"HTTP server running on http://0.0.0.0:{port} serving {directory}/")
+    print(
+        f"HTTP server running on http://0.0.0.0:{port} serving {os.path.relpath(directory)}/"
+    )
     return httpd
 
 async def audio_stream(websocket):
