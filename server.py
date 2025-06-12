@@ -10,6 +10,9 @@ import websockets
 import argparse
 import numpy as np
 import simpleaudio as sa
+import http.server
+import threading
+import functools
 # import ssl  # Uncomment if using SSL/TLS
 
 from dsp.beat_generator import BeatGenerator
@@ -50,6 +53,17 @@ def play_test_sweep(duration=5.0, start=200.0, end=800.0):
     stereo = np.stack([wave, wave], axis=1)
     audio = (stereo * 32767).astype(np.int16)
     sa.play_buffer(audio, 2, 2, SAMPLE_RATE).wait_done()
+
+def start_static_server(port=8000, directory="www"):
+    """Launch a simple HTTP server to host the frontend."""
+    handler = functools.partial(
+        http.server.SimpleHTTPRequestHandler, directory=directory
+    )
+    httpd = http.server.ThreadingHTTPServer(("0.0.0.0", port), handler)
+    thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    thread.start()
+    print(f"HTTP server running on http://0.0.0.0:{port} serving {directory}/")
+    return httpd
 
 async def audio_stream(websocket):
     generator = BeatGenerator(sample_rate=SAMPLE_RATE, block_size=BLOCK_SIZE)
@@ -115,6 +129,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Hemi-Lab ULTRA++ Server")
     parser.add_argument('--host', default='0.0.0.0', help='Bind address')
     parser.add_argument('--port', type=int, default=8765, help='WebSocket port')
+    parser.add_argument('--http-port', type=int, default=8000,
+                        help='Port for static file server')
     parser.add_argument('--test-sweep', action='store_true',
                         help='Play a sample sweep and exit')
     args = parser.parse_args()
@@ -123,6 +139,7 @@ if __name__ == '__main__':
         play_test_sweep()
     else:
         try:
+            start_static_server(port=args.http_port)
             asyncio.run(main(host=args.host, port=args.port))
         except KeyboardInterrupt:
             print("Server shutting down...")
