@@ -8,8 +8,10 @@ sudo apt-get update
 # Install system packages
 sudo apt-get install -y \
     python3 python3-venv python3-pip \
-    build-essential libasound2-dev \
-    nodejs npm
+    build-essential libasound2-dev
+
+# Node.js is optional for frontend tooling and is no longer installed
+# automatically to avoid package conflicts. Install it separately if needed.
 
 # Create and activate virtual environment
 python3 -m venv hemi_env
