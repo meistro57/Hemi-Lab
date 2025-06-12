@@ -62,14 +62,14 @@ source hemi_env/bin/activate  # On Windows: hemi_env\Scripts\activate
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Launch the backend
+# Launch the server (backend + frontend)
 python server.py
 
 # Play a quick frequency sweep for testing
 python server.py --test-sweep
 
-# In a separate terminal, serve the frontend
-cd www && python -m http.server 8000
+The server also hosts the frontend on port 8000 by default. Use `--http-port` to
+change it if needed.
 ```
 
 Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency, phase shift and mode.
