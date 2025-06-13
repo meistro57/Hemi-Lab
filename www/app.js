@@ -9,7 +9,9 @@ async function start() {
   socket = new WebSocket(`${wsProto}://${wsHost}:8765`);
   audioCtx = new AudioContext();
   await audioCtx.audioWorklet.addModule('audio-worklet.js');
-  workletNode = new AudioWorkletNode(audioCtx, 'buffer-player');
+  workletNode = new AudioWorkletNode(audioCtx, 'buffer-player', {
+    outputChannelCount: [2]
+  });
   workletNode.connect(audioCtx.destination);
 
   socket.binaryType = 'arraybuffer';
@@ -38,6 +40,9 @@ function stop() {
     socket = null;
   }
   if (workletNode) {
+    try {
+      workletNode.port.postMessage({ command: 'stop' });
+    } catch (_) {}
     workletNode.disconnect();
     workletNode = null;
   }

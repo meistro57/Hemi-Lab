@@ -4,10 +4,17 @@ class BufferPlayer extends AudioWorkletProcessor {
     this.queue = [];
     this.readIndex = 0;
     this.ready = false;
+    this.minBlocks = 5;
     this.port.onmessage = (e) => {
+      if (e.data && e.data.command === 'stop') {
+        this.queue = [];
+        this.readIndex = 0;
+        this.ready = false;
+        return;
+      }
       const arr = new Float32Array(e.data);
       this.queue.push(arr);
-      if (this.queue.length >= 3) {
+      if (this.queue.length >= this.minBlocks) {
         // Wait for a small buffer before starting playback
         this.ready = true;
       }
@@ -41,7 +48,7 @@ class BufferPlayer extends AudioWorkletProcessor {
     if (this.readIndex >= half) {
       this.queue.shift();
       this.readIndex = 0;
-      if (this.queue.length < 1) {
+      if (this.queue.length < this.minBlocks) {
         this.ready = false;
       }
     }
