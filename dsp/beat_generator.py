@@ -1,9 +1,21 @@
 import numpy as np
 
+# Attempt to import CuPy for GPU acceleration. If the library is missing or
+# fails to initialize (e.g. due to missing CUDA libraries), gracefully fall back
+# to NumPy so the application continues to work using the CPU.
 try:
-    import cupy as cp
-    gpu_available = True
-except ImportError:  # fallback to numpy
+    import cupy as _cp  # noqa: F401
+    try:
+        # A trivial operation to verify CUDA availability. Any failure here means
+        # we should not attempt to use the GPU backend.
+        _cp.zeros(1)
+        cp = _cp
+        gpu_available = True
+    except Exception as e:  # pragma: no cover - depends on system libs
+        print(f"CuPy initialization failed: {e}; falling back to CPU")
+        cp = np
+        gpu_available = False
+except ImportError:  # pragma: no cover - CuPy not installed
     cp = np
     gpu_available = False
 
