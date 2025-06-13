@@ -1,6 +1,7 @@
 let socket;
 let audioCtx;
 let workletNode;
+let paramInterval;
 
 async function start() {
   const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -17,13 +18,37 @@ async function start() {
       workletNode.port.postMessage(ev.data);
     }
   };
+  socket.onopen = sendParams;
 
-  sendParams();
-  setInterval(sendParams, 1000);
+  paramInterval = setInterval(sendParams, 1000);
 
   const btn = document.getElementById('connect');
   if (btn) {
     btn.textContent = 'Playing';
+  }
+}
+
+function stop() {
+  if (paramInterval) {
+    clearInterval(paramInterval);
+    paramInterval = null;
+  }
+  if (socket) {
+    socket.close();
+    socket = null;
+  }
+  if (workletNode) {
+    workletNode.disconnect();
+    workletNode = null;
+  }
+  if (audioCtx) {
+    audioCtx.close();
+    audioCtx = null;
+  }
+
+  const btn = document.getElementById('connect');
+  if (btn) {
+    btn.textContent = 'Play';
   }
 }
 
@@ -36,3 +61,7 @@ function sendParams() {
 }
 
 document.getElementById('connect').onclick = () => start();
+const stopBtn = document.getElementById('stop');
+if (stopBtn) {
+  stopBtn.onclick = () => stop();
+}

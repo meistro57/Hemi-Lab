@@ -43,7 +43,7 @@
       padding: 2px 4px;
       width: 80px;
     }
-    #connect {
+    #connect, #stop {
       display: block;
       margin: 10px auto;
       padding: 4px 20px;
@@ -90,6 +90,7 @@
       </select>
     </label>
     <button id="connect">Play</button>
+    <button id="stop">Stop</button>
     <div class="status" id="status"></div>
     <canvas id="scope" width="600" height="200"></canvas>
   </div>
@@ -97,12 +98,16 @@
   <script>
     // Basic feedback for play button
     const connectBtn = document.getElementById('connect');
+    const stopBtn = document.getElementById('stop');
     const statusDiv = document.getElementById('status');
     connectBtn.addEventListener('click', () => {
       statusDiv.textContent = "Connecting...";
       setTimeout(() => {
         statusDiv.textContent = "Playing...";
       }, 800);
+    });
+    stopBtn.addEventListener('click', () => {
+      statusDiv.textContent = "Stopped";
     });
   </script>
 </body>
