@@ -3,7 +3,9 @@ let audioCtx;
 let workletNode;
 
 async function start() {
-  socket = new WebSocket('ws://localhost:8765');
+  const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const wsHost = window.location.hostname;
+  socket = new WebSocket(`${wsProto}://${wsHost}:8765`);
   audioCtx = new AudioContext();
   await audioCtx.audioWorklet.addModule('audio-worklet.js');
   workletNode = new AudioWorkletNode(audioCtx, 'buffer-player');

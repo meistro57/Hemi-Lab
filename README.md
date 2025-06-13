@@ -72,7 +72,7 @@ The server also hosts the frontend on port 8000 by default. Use `--http-port` to
 change it if needed.
 ```
 
-Then open `http://localhost:8000` in your browser and use the UI controls to adjust carrier frequency, beat frequency, phase shift and mode.
+Then open `http://localhost:8000` (or replace `localhost` with your machine's IP address to access it from another device on your network) and use the UI controls to adjust carrier frequency, beat frequency, phase shift and mode.
 
 ### Quick Ubuntu Setup
 
