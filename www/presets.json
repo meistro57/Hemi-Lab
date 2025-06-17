@@ -1,0 +1,6 @@
+[
+  {"name": "Delta Sleep", "carrier": 250, "beat": 2, "type": "monaural", "notes": "Pink noise on, deep rest"},
+  {"name": "Theta Focus", "carrier": 400, "beat": 6, "type": "binaural", "notes": "Meditation, creativity"},
+  {"name": "Alpha Calm", "carrier": 400, "beat": 10, "type": "monaural", "notes": "Stress reduction"},
+  {"name": "Gamma Cognition", "carrier": 400, "beat": 40, "type": "monaural", "notes": "Memory & attention"}
+]

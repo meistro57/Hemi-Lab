@@ -8,7 +8,7 @@
     body {
       font-family: Tahoma, sans-serif;
       margin: 0;
-      background: #000;
+      background: linear-gradient(#1a1a1a, #000);
       color: #eee;
     }
     .header {
@@ -66,6 +66,13 @@
       background: #000;
       border: 1px solid #555;
     }
+    .notes {
+      margin-top: 8px;
+      text-align: center;
+      font-size: 0.85em;
+      color: #ffcc00;
+      min-height: 1.2em;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +90,11 @@
     <label>Phase Shift (deg)
       <input id="phase" type="number" value="0" min="0" max="360" step="1">
     </label>
+    <label>Preset
+      <select id="preset">
+        <option value="">Select...</option>
+      </select>
+    </label>
     <label>Mode
       <select id="mode">
         <option value="binaural">Binaural</option>
@@ -93,6 +105,7 @@
     <button id="stop">Stop</button>
     <div class="status" id="status"></div>
     <canvas id="scope" width="600" height="200"></canvas>
+    <div class="notes" id="preset-notes"></div>
   </div>
   <script src="app.js"></script>
   <script>
