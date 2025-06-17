@@ -2,6 +2,7 @@ let socket;
 let audioCtx;
 let workletNode;
 let paramInterval;
+let presets = [];
 
 async function start() {
   const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -70,3 +71,33 @@ const stopBtn = document.getElementById('stop');
 if (stopBtn) {
   stopBtn.onclick = () => stop();
 }
+
+async function loadPresets() {
+  try {
+    const resp = await fetch('presets.json');
+    presets = await resp.json();
+    const select = document.getElementById('preset');
+    if (!select) return;
+    presets.forEach((p, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = p.name;
+      select.appendChild(opt);
+    });
+    select.addEventListener('change', () => {
+      const idx = parseInt(select.value);
+      if (isNaN(idx)) return;
+      const p = presets[idx];
+      document.getElementById('carrier').value = p.carrier;
+      document.getElementById('beat').value = p.beat;
+      document.getElementById('mode').value = p.type || 'binaural';
+      const notes = document.getElementById('preset-notes');
+      if (notes) notes.textContent = p.notes || '';
+      sendParams();
+    });
+  } catch (e) {
+    console.error('Failed to load presets', e);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', loadPresets);

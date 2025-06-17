@@ -23,6 +23,7 @@
 - 🧠 Experimental **resonance feedback AI agent** (coming soon)
 - 🌐 Cross-platform UI in-browser (works on Linux/Windows/macOS)
 - 🎨 Live channel visualizer and harmonic analysis
+- 🎚️ Quick-select frequency presets for common brainwave targets
 - 🔒 Fully self-hosted, no internet dependency
 
 ---
