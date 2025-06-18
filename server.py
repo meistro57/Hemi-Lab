@@ -9,7 +9,7 @@ import struct
 import websockets
 import argparse
 import numpy as np
-import simpleaudio as sa
+import sounddevice as sd
 import http.server
 import threading
 import functools
@@ -52,8 +52,8 @@ def play_test_sweep(duration=5.0, start=200.0, end=800.0):
     freqs = np.linspace(start, end, t.size)
     wave = np.sin(2 * np.pi * freqs * t)
     stereo = np.stack([wave, wave], axis=1)
-    audio = (stereo * 32767).astype(np.int16)
-    sa.play_buffer(audio, 2, 2, SAMPLE_RATE).wait_done()
+    sd.play(stereo, SAMPLE_RATE)
+    sd.wait()
 
 def start_static_server(port=8000, directory="www"):
     """Launch a simple HTTP server to host the frontend."""
