@@ -4,6 +4,11 @@ let workletNode;
 let paramInterval;
 let presets = [];
 
+function showError(message) {
+  const status = document.getElementById('status');
+  if (status) status.textContent = message;
+}
+
 async function start() {
   const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
   const wsHost = window.location.hostname;
@@ -17,10 +22,21 @@ async function start() {
 
   socket.binaryType = 'arraybuffer';
   socket.onmessage = (ev) => {
+    if (typeof ev.data === 'string') {
+      try {
+        const msg = JSON.parse(ev.data);
+        if (msg.type === 'error') {
+          showError(msg.messages.join(', '));
+          return;
+        }
+      } catch (_) {}
+    }
     if (workletNode) {
       workletNode.port.postMessage(ev.data);
     }
   };
+  socket.onerror = () => showError('WebSocket error');
+  socket.onclose = () => showError('Connection closed');
   socket.onopen = sendParams;
 
   paramInterval = setInterval(sendParams, 1000);
@@ -96,6 +112,7 @@ async function loadPresets() {
       sendParams();
     });
   } catch (e) {
+    showError('Failed to load presets');
     console.error('Failed to load presets', e);
   }
 }

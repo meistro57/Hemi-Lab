@@ -32,19 +32,19 @@ def pack_audio(block):
     return block32.tobytes()
 
 def validate_params(params):
-    """
-    Ensure the parameters are within valid ranges.
-    """
+    """Validate parameters and return a list of error messages."""
+    errors = []
     if not (20.0 <= params.get('carrier', 400.0) <= 20000.0):
-        print("Carrier frequency out of range. Setting to default (400.0).")
+        errors.append("Carrier frequency out of range. Using 400.0")
         params['carrier'] = 400.0
     if not (0.1 <= params.get('beat', 10.0) <= 30.0):
-        print("Beat frequency out of range. Setting to default (10.0).")
+        errors.append("Beat frequency out of range. Using 10.0")
         params['beat'] = 10.0
     if not (0.0 <= params.get('phase_shift', 0.0) <= 360.0):
-        print("Phase shift out of range. Setting to default (0.0).")
+        errors.append("Phase shift out of range. Using 0.0")
         params['phase_shift'] = 0.0
-    # You may add more param validation as needed
+    # Additional validation can be added here
+    return errors
 
 def play_test_sweep(duration=5.0, start=200.0, end=800.0):
     """Play a short frequency sweep for quick audio testing."""
@@ -85,7 +85,9 @@ async def audio_stream(websocket):
             try:
                 updates = json.loads(msg)
                 params.update(updates)
-                validate_params(params)
+                errs = validate_params(params)
+                if errs:
+                    await websocket.send(json.dumps({"type": "error", "messages": errs}))
                 if DEBUG:
                     print(f"Received updates: {updates}")
                     print(f"Updated params: {params}")
@@ -147,5 +149,7 @@ if __name__ == '__main__':
         try:
             start_static_server(port=args.http_port)
             asyncio.run(main(host=args.host, port=args.port))
+        except OSError as exc:
+            print(f"Server failed to start: {exc}")
         except KeyboardInterrupt:
             print("Server shutting down...")
