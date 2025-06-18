@@ -44,6 +44,15 @@ def validate_params(params):
     if not (0.0 <= params.get('phase_shift', 0.0) <= 360.0):
         print("Phase shift out of range. Setting to default (0.0).")
         params['phase_shift'] = 0.0
+    amp = params.get('amplitude', 1.0)
+    if not (0.0 <= amp <= 2.0):
+        print("Amplitude out of range. Setting to default (1.0).")
+        params['amplitude'] = 1.0
+    cutoff = params.get('filter_cutoff')
+    if cutoff is not None:
+        if not (10.0 <= cutoff <= params.get('sample_rate', SAMPLE_RATE) / 2):
+            print("Filter cutoff out of range. Disabling filter.")
+            params['filter_cutoff'] = None
     # You may add more param validation as needed
 
 def play_test_sweep(duration=5.0, start=200.0, end=800.0):
@@ -78,6 +87,8 @@ async def audio_stream(websocket):
         'beat': 10.0,
         'mode': 'binaural',
         'phase_shift': 0.0,
+        'amplitude': 1.0,
+        'filter_cutoff': None,
     }
 
     async def recv_loop():
@@ -86,6 +97,7 @@ async def audio_stream(websocket):
                 updates = json.loads(msg)
                 params.update(updates)
                 validate_params(params)
+                generator.filter_cutoff = params.get('filter_cutoff')
                 if DEBUG:
                     print(f"Received updates: {updates}")
                     print(f"Updated params: {params}")
