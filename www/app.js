@@ -62,8 +62,13 @@ function sendParams() {
   const carrier = parseFloat(document.getElementById('carrier').value);
   const beat = parseFloat(document.getElementById('beat').value);
   const phase = parseFloat(document.getElementById('phase').value);
+  const amplitude = parseFloat(document.getElementById('amplitude').value);
+  const cutoffInput = document.getElementById('filter_cutoff').value;
+  const filter_cutoff = cutoffInput === '' ? null : parseFloat(cutoffInput);
   const mode = document.getElementById('mode').value;
-  socket.send(JSON.stringify({ carrier, beat, phase_shift: phase, mode }));
+  socket.send(
+    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode })
+  );
 }
 
 document.getElementById('connect').onclick = () => start();
@@ -91,6 +96,13 @@ async function loadPresets() {
       document.getElementById('carrier').value = p.carrier;
       document.getElementById('beat').value = p.beat;
       document.getElementById('mode').value = p.type || 'binaural';
+      if (p.amplitude !== undefined) {
+        document.getElementById('amplitude').value = p.amplitude;
+      }
+      if (p.filter_cutoff !== undefined) {
+        const fcField = document.getElementById('filter_cutoff');
+        fcField.value = p.filter_cutoff === null ? '' : p.filter_cutoff;
+      }
       const notes = document.getElementById('preset-notes');
       if (notes) notes.textContent = p.notes || '';
       sendParams();
