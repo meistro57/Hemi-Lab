@@ -53,6 +53,10 @@ def validate_params(params):
         if not (10.0 <= cutoff <= params.get('sample_rate', SAMPLE_RATE) / 2):
             print("Filter cutoff out of range. Disabling filter.")
             params['filter_cutoff'] = None
+    waveform = params.get('waveform', 'sine')
+    if waveform not in ['sine', 'square', 'triangle', 'sawtooth']:
+        print("Invalid waveform. Defaulting to sine.")
+        params['waveform'] = 'sine'
     # You may add more param validation as needed
 
 def play_test_sweep(duration=5.0, start=200.0, end=800.0):
@@ -89,6 +93,7 @@ async def audio_stream(websocket):
         'phase_shift': 0.0,
         'amplitude': 1.0,
         'filter_cutoff': None,
+        'waveform': 'sine',
     }
 
     async def recv_loop():

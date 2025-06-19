@@ -71,8 +71,18 @@ class BeatGenerator:
             return cp.asarray(cpu_arr), state
         return self._lowpass_cpu(arr, cutoff, state)
 
+    def _waveform(self, phase, type_):
+        xp = self._xp()
+        if type_ == 'square':
+            return xp.sign(xp.sin(phase))
+        if type_ == 'triangle':
+            return 2 * xp.arcsin(xp.sin(phase)) / xp.pi
+        if type_ == 'sawtooth':
+            return (phase / xp.pi % 2) - 1
+        return xp.sin(phase)
+
     def generate(self, carrier=400.0, beat=10.0, mode='binaural', phase_shift=0.0,
-                 amplitude=1.0, filter_cutoff=None):
+                 amplitude=1.0, filter_cutoff=None, waveform='sine'):
         """Generate a block of audio samples.
 
         Parameters
@@ -89,6 +99,9 @@ class BeatGenerator:
             Output volume multiplier. ``1.0`` is unchanged.
         filter_cutoff : float or None, optional
             Override the object's ``filter_cutoff`` for this call.
+        waveform : str, optional
+            Oscillator shape: ``'sine'``, ``'square'``, ``'triangle'`` or
+            ``'sawtooth'``.
         """
         xp = self._xp()
 
@@ -107,8 +120,8 @@ class BeatGenerator:
         phase_vec_left = self.phase_left + phase_inc_left * xp.arange(self.block_size, dtype=xp.float64)
         phase_vec_right = base_right + phase_shift_rad
 
-        left = xp.sin(phase_vec_left)
-        right = xp.sin(phase_vec_right)
+        left = self._waveform(phase_vec_left, waveform)
+        right = self._waveform(phase_vec_right, waveform)
 
         # update phase for continuity
         self.phase_left = float((phase_vec_left[-1] + phase_inc_left) % (2 * xp.pi))
