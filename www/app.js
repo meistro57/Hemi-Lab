@@ -66,8 +66,9 @@ function sendParams() {
   const cutoffInput = document.getElementById('filter_cutoff').value;
   const filter_cutoff = cutoffInput === '' ? null : parseFloat(cutoffInput);
   const mode = document.getElementById('mode').value;
+  const waveform = document.getElementById('waveform').value;
   socket.send(
-    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode })
+    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode, waveform })
   );
 }
 
@@ -96,6 +97,9 @@ async function loadPresets() {
       document.getElementById('carrier').value = p.carrier;
       document.getElementById('beat').value = p.beat;
       document.getElementById('mode').value = p.type || 'binaural';
+      if (p.waveform) {
+        document.getElementById('waveform').value = p.waveform;
+      }
       if (p.amplitude !== undefined) {
         document.getElementById('amplitude').value = p.amplitude;
       }

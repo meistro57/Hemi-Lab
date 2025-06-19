@@ -18,7 +18,8 @@
 - 🔊 Real-time Web Audio playback using `AudioWorklet`
 - ⚡ WebSocket-powered DSP backend in Python (CUDA with PyTorch or CuPy)
 - 🧪 Full EEG-band targeting: Delta, Theta, Alpha, Beta, Gamma
- - 🎛️ Adjustable carriers, beat frequencies, sweep ranges, and channel phase offsets
+- 🎛️ Adjustable carriers, beat frequencies, sweep ranges, and channel phase offsets
+- 🎵 Selectable oscillator waveforms: sine, square, triangle and sawtooth
 - 🧬 Modular architecture ready for future EEG feedback integration
 - 🧠 Experimental **resonance feedback AI agent** (coming soon)
 - 🌐 Cross-platform UI in-browser (works on Linux/Windows/macOS)
