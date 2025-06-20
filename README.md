@@ -26,6 +26,9 @@
 - 🎨 Live channel visualizer and harmonic analysis
 - 🎚️ Quick-select frequency presets for common brainwave targets
 - 🔒 Fully self-hosted, no internet dependency
+- 🔈 **Amplitude control** up to 2× for volume shaping
+- 🌀 **Optional low-pass filter** to reduce high-frequency artifacts
+- ♻️ **Automatic GPU fallback** if CUDA isn't available
 
 ---
 
