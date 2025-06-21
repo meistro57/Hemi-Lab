@@ -82,8 +82,10 @@ function sendParams() {
   const filter_cutoff = cutoffInput === '' ? null : parseFloat(cutoffInput);
   const mode = document.getElementById('mode').value;
   const waveform = document.getElementById('waveform').value;
+  const focusSel = document.getElementById('focus_level');
+  const focus_level = focusSel ? focusSel.value : '';
   socket.send(
-    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode, waveform })
+    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode, waveform, focus_level })
   );
 }
 

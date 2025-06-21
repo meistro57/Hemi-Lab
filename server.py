@@ -94,7 +94,12 @@ async def audio_stream(websocket):
         'amplitude': 1.0,
         'filter_cutoff': None,
         'waveform': 'sine',
+        'focus_level': ''
     }
+
+    swirl_phase = 0.0
+    delta_phase = 0.0
+
 
     async def recv_loop():
         async for msg in websocket:
@@ -114,7 +119,34 @@ async def audio_stream(websocket):
     try:
         while True:
             try:
-                block = generator.generate(**params)
+                focus = params.get('focus_level', '')
+                beat = params.get('beat', 10.0)
+                phase_shift = params.get('phase_shift', 0.0)
+                amp = params.get('amplitude', 1.0)
+
+                if focus == '10':
+                    beat = 7.0
+                elif focus == '12':
+                    swirl_phase += 2 * np.pi * 0.05 * BLOCK_SIZE / SAMPLE_RATE
+                    beat = 8.5
+                    phase_shift = 45.0 * np.sin(swirl_phase)
+                elif focus == '15':
+                    delta_phase += 2 * np.pi * 0.75 * BLOCK_SIZE / SAMPLE_RATE
+                    beat = 7.0
+                    amp = amp * (1.0 + 0.3 * np.sin(delta_phase))
+                elif focus == '21':
+                    beat = 10.0 + np.random.uniform(-0.5, 0.5)
+                    phase_shift = phase_shift + np.random.uniform(-1.0, 1.0)
+
+                block = generator.generate(
+                    carrier=params.get('carrier', 400.0),
+                    beat=beat,
+                    mode=params.get('mode', 'binaural'),
+                    phase_shift=phase_shift,
+                    amplitude=amp,
+                    filter_cutoff=params.get('filter_cutoff'),
+                    waveform=params.get('waveform', 'sine'),
+                )
                 await asyncio.gather(
                     websocket.send(pack_audio(block)),
                     asyncio.sleep(BLOCK_SIZE / SAMPLE_RATE)
