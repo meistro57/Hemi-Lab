@@ -5,7 +5,6 @@ The server processes client requests and streams generated audio blocks.
 
 import asyncio
 import json
-import struct
 import websockets
 import argparse
 import numpy as np
@@ -21,7 +20,8 @@ from dsp.beat_generator import BeatGenerator
 SAMPLE_RATE = 48000
 BLOCK_SIZE = 2048
 clients = set()
-DEBUG = True  # Set to False to reduce logging
+# Enable verbose debug output with the ``--debug`` CLI flag
+DEBUG = False
 
 def pack_audio(block):
     """
@@ -188,13 +188,20 @@ if __name__ == '__main__':
                         help='Port for static file server')
     parser.add_argument('--test-sweep', action='store_true',
                         help='Play a sample sweep and exit')
+    parser.add_argument('--debug', action='store_true',
+                        help='Enable verbose debug logging')
     args = parser.parse_args()
+
+    if args.debug:
+        DEBUG = True
 
     if args.test_sweep:
         play_test_sweep()
     else:
+        httpd = start_static_server(port=args.http_port)
         try:
-            start_static_server(port=args.http_port)
             asyncio.run(main(host=args.host, port=args.port))
         except KeyboardInterrupt:
             print("Server shutting down...")
+        finally:
+            httpd.shutdown()
