@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hemi-Lab ULTRA++</title>
   <style>
     /* Simple Winamp inspired look */
@@ -20,7 +21,8 @@
       border-bottom: 2px solid #000;
     }
     .container {
-      width: 320px;
+      max-width: 320px;
+      width: 90%;
       background: #2b2b2b;
       margin: 40px auto;
       padding: 12px;
@@ -30,7 +32,7 @@
     }
     label {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       margin-bottom: 8px;
       font-size: 0.9em;
     }
@@ -41,7 +43,12 @@
       border: 1px solid #555;
       border-radius: 2px;
       padding: 2px 4px;
+    }
+    input[type="number"] {
       width: 80px;
+    }
+    input[type="range"] {
+      width: 100%;
     }
     #connect, #stop {
       display: block;
@@ -65,6 +72,8 @@
       margin: 12px auto 0 auto;
       background: #000;
       border: 1px solid #555;
+      width: 100%;
+      height: 150px;
     }
     .notes {
       margin-top: 8px;
@@ -82,16 +91,20 @@
   </div>
   <div class="container">
     <label>Carrier Frequency (Hz)
-      <input id="carrier" type="number" value="400" min="1" max="2000" step="1">
+      <input id="carrier" type="range" value="400" min="1" max="2000" step="1">
+      <span id="carrier_val">400</span>
     </label>
     <label>Beat Frequency (Hz)
-      <input id="beat" type="number" value="10" min="0.1" max="40" step="0.1">
+      <input id="beat" type="range" value="10" min="0.1" max="40" step="0.1">
+      <span id="beat_val">10</span>
     </label>
     <label>Phase Shift (deg)
-      <input id="phase" type="number" value="0" min="0" max="360" step="1">
+      <input id="phase" type="range" value="0" min="0" max="360" step="1">
+      <span id="phase_val">0</span>
     </label>
     <label>Amplitude
-      <input id="amplitude" type="number" value="1.0" min="0" max="2" step="0.01">
+      <input id="amplitude" type="range" value="1.0" min="0" max="2" step="0.01">
+      <span id="amplitude_val">1.0</span>
     </label>
     <label>Filter Cutoff (Hz)
       <input id="filter_cutoff" type="number" value="" placeholder="off" min="10" max="20000" step="10">
@@ -145,6 +158,21 @@
     });
     stopBtn.addEventListener('click', () => {
       statusDiv.textContent = "Stopped";
+    });
+
+    // Update text outputs for sliders
+    ['carrier', 'beat', 'phase', 'amplitude'].forEach((id) => {
+      const slider = document.getElementById(id);
+      const out = document.getElementById(id + '_val');
+      if (slider && out) {
+        out.textContent = slider.value;
+        slider.addEventListener('input', () => {
+          out.textContent = slider.value;
+          if (typeof sendParams === 'function') {
+            sendParams();
+          }
+        });
+      }
     });
   </script>
 </body>
