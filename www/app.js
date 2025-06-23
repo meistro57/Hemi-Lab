@@ -3,9 +3,12 @@ let audioCtx;
 let workletNode;
 let paramInterval;
 let presets = [];
-let analyser;
-let freqData;
-let timeData;
+let analyserL;
+let analyserR;
+let freqDataL;
+let freqDataR;
+let timeDataL;
+let timeDataR;
 let animId;
 
 async function start() {
@@ -17,12 +20,19 @@ async function start() {
   workletNode = new AudioWorkletNode(audioCtx, 'buffer-player', {
     outputChannelCount: [2]
   });
-  analyser = audioCtx.createAnalyser();
-  analyser.fftSize = 1024;
-  freqData = new Uint8Array(analyser.frequencyBinCount);
-  timeData = new Uint8Array(analyser.fftSize);
-  workletNode.connect(analyser);
-  analyser.connect(audioCtx.destination);
+  const splitter = audioCtx.createChannelSplitter(2);
+  analyserL = audioCtx.createAnalyser();
+  analyserR = audioCtx.createAnalyser();
+  analyserL.fftSize = 1024;
+  analyserR.fftSize = 1024;
+  freqDataL = new Uint8Array(analyserL.frequencyBinCount);
+  freqDataR = new Uint8Array(analyserR.frequencyBinCount);
+  timeDataL = new Uint8Array(analyserL.fftSize);
+  timeDataR = new Uint8Array(analyserR.fftSize);
+  workletNode.connect(splitter);
+  splitter.connect(analyserL, 0);
+  splitter.connect(analyserR, 1);
+  workletNode.connect(audioCtx.destination);
 
   socket.binaryType = 'arraybuffer';
   socket.onmessage = (ev) => {
@@ -65,7 +75,12 @@ function stop() {
     cancelAnimationFrame(animId);
     animId = null;
   }
-  analyser = null;
+  analyserL = null;
+  analyserR = null;
+  freqDataL = null;
+  freqDataR = null;
+  timeDataL = null;
+  timeDataR = null;
 
   const btn = document.getElementById('connect');
   if (btn) {
@@ -90,32 +105,56 @@ function sendParams() {
 }
 
 function drawScope() {
-  if (!analyser) return;
-  const canvas = document.getElementById('scope');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const { width, height } = canvas;
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, width, height);
+  if (!analyserL || !analyserR) return;
+  const leftCanvas = document.getElementById('scope-left');
+  const rightCanvas = document.getElementById('scope-right');
+  if (!leftCanvas || !rightCanvas) return;
+  const ctxL = leftCanvas.getContext('2d');
+  const ctxR = rightCanvas.getContext('2d');
+  const { width, height } = leftCanvas;
+  ctxL.fillStyle = '#000';
+  ctxL.fillRect(0, 0, width, height);
+  ctxR.fillStyle = '#000';
+  ctxR.fillRect(0, 0, width, height);
 
-  analyser.getByteTimeDomainData(timeData);
-  ctx.strokeStyle = '#0f0';
-  ctx.beginPath();
-  for (let i = 0; i < timeData.length; i++) {
-    const x = (i / timeData.length) * width;
-    const y = (timeData[i] / 255) * height;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
+  analyserL.getByteTimeDomainData(timeDataL);
+  analyserR.getByteTimeDomainData(timeDataR);
+
+  ctxL.strokeStyle = '#0f0';
+  ctxL.beginPath();
+  for (let i = 0; i < timeDataL.length; i++) {
+    const x = (i / timeDataL.length) * width;
+    const y = (timeDataL[i] / 255) * height;
+    if (i === 0) ctxL.moveTo(x, y);
+    else ctxL.lineTo(x, y);
   }
-  ctx.stroke();
+  ctxL.stroke();
 
-  analyser.getByteFrequencyData(freqData);
-  ctx.fillStyle = '#ff0';
-  const barWidth = width / freqData.length;
-  for (let i = 0; i < freqData.length; i++) {
-    const val = freqData[i] / 255;
+  ctxR.strokeStyle = '#0f0';
+  ctxR.beginPath();
+  for (let i = 0; i < timeDataR.length; i++) {
+    const x = (i / timeDataR.length) * width;
+    const y = (timeDataR[i] / 255) * height;
+    if (i === 0) ctxR.moveTo(x, y);
+    else ctxR.lineTo(x, y);
+  }
+  ctxR.stroke();
+
+  analyserL.getByteFrequencyData(freqDataL);
+  ctxL.fillStyle = '#ff0';
+  const barWidth = width / freqDataL.length;
+  for (let i = 0; i < freqDataL.length; i++) {
+    const val = freqDataL[i] / 255;
     const barHeight = val * (height / 3);
-    ctx.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+    ctxL.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+  }
+
+  analyserR.getByteFrequencyData(freqDataR);
+  ctxR.fillStyle = '#ff0';
+  for (let i = 0; i < freqDataR.length; i++) {
+    const val = freqDataR[i] / 255;
+    const barHeight = val * (height / 3);
+    ctxR.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
   }
 
   animId = requestAnimationFrame(drawScope);

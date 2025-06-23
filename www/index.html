@@ -60,7 +60,7 @@
       margin-top: 4px;
       min-height: 1em;
     }
-    #scope {
+    #scope-left, #scope-right {
       display: block;
       margin: 12px auto 0 auto;
       background: #000;
@@ -127,7 +127,8 @@
     <button id="connect">Play</button>
     <button id="stop">Stop</button>
     <div class="status" id="status"></div>
-    <canvas id="scope" width="600" height="200"></canvas>
+    <canvas id="scope-left" width="600" height="150"></canvas>
+    <canvas id="scope-right" width="600" height="150"></canvas>
     <div class="notes" id="preset-notes"></div>
   </div>
   <script src="app.js"></script>
