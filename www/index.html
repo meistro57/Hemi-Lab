@@ -151,10 +151,7 @@
     const stopBtn = document.getElementById('stop');
     const statusDiv = document.getElementById('status');
     connectBtn.addEventListener('click', () => {
-      statusDiv.textContent = "Connecting...";
-      setTimeout(() => {
-        statusDiv.textContent = "Playing...";
-      }, 800);
+      statusDiv.textContent = "Playing...";
     });
     stopBtn.addEventListener('click', () => {
       statusDiv.textContent = "Stopped";
