@@ -16,7 +16,7 @@
 
 - 🎶 **Sub-0.1Hz precision** for binaural/monaural beat frequency control
 - 🔊 Real-time Web Audio playback using `AudioWorklet`
-- ⚡ WebSocket-powered DSP backend in Python (CUDA with PyTorch or CuPy)
+- ⚡ Browser-based oscillator generation for cleaner audio
 - 🧪 Full EEG-band targeting: Delta, Theta, Alpha, Beta, Gamma
 - 🎛️ Adjustable carriers, beat frequencies, sweep ranges, and channel phase offsets
 - 🎵 Selectable oscillator waveforms: sine, square, triangle and sawtooth
@@ -40,7 +40,7 @@
 | Backend         | Python 3.x + asyncio                 |
 | DSP Engine      | PyTorch or CuPy (GPU-accelerated)   |
 | Frontend        | HTML + JS (Web Audio API + Canvas)  |
-| Audio Pipeline  | WebSocket + AudioWorklet             |
+| Audio Pipeline  | In-browser Oscillator + AudioWorklet |
 | Dev Platform    | Linux + Windows via WSL2             |
 
 ---

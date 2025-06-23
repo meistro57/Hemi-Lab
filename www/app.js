@@ -1,4 +1,3 @@
-let socket;
 let audioCtx;
 let workletNode;
 let paramInterval;
@@ -12,12 +11,9 @@ let timeDataR;
 let animId;
 
 async function start() {
-  const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const wsHost = window.location.hostname;
-  socket = new WebSocket(`${wsProto}://${wsHost}:8765`);
   audioCtx = new AudioContext();
-  await audioCtx.audioWorklet.addModule('audio-worklet.js');
-  workletNode = new AudioWorkletNode(audioCtx, 'buffer-player', {
+  await audioCtx.audioWorklet.addModule('oscillator-worklet.js');
+  workletNode = new AudioWorkletNode(audioCtx, 'oscillator-generator', {
     outputChannelCount: [2]
   });
   const splitter = audioCtx.createChannelSplitter(2);
@@ -34,15 +30,7 @@ async function start() {
   splitter.connect(analyserR, 1);
   workletNode.connect(audioCtx.destination);
 
-  socket.binaryType = 'arraybuffer';
-  socket.onmessage = (ev) => {
-    if (workletNode) {
-      workletNode.port.postMessage(ev.data);
-    }
-  };
-  socket.onopen = sendParams;
-
-  paramInterval = setInterval(sendParams, 1000);
+  paramInterval = setInterval(sendParams, 100);
   animId = requestAnimationFrame(drawScope);
 
   const btn = document.getElementById('connect');
@@ -55,10 +43,6 @@ function stop() {
   if (paramInterval) {
     clearInterval(paramInterval);
     paramInterval = null;
-  }
-  if (socket) {
-    socket.close();
-    socket = null;
   }
   if (workletNode) {
     try {
@@ -97,11 +81,9 @@ function sendParams() {
   const filter_cutoff = cutoffInput === '' ? null : parseFloat(cutoffInput);
   const mode = document.getElementById('mode').value;
   const waveform = document.getElementById('waveform').value;
-  const focusSel = document.getElementById('focus_level');
-  const focus_level = focusSel ? focusSel.value : '';
-  socket.send(
-    JSON.stringify({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode, waveform, focus_level })
-  );
+  if (workletNode) {
+    workletNode.port.postMessage({ carrier, beat, phase_shift: phase, amplitude, filter_cutoff, mode, waveform });
+  }
 }
 
 function drawScope() {
