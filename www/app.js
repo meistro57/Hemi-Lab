@@ -13,6 +13,15 @@ let animId;
 async function start() {
   audioCtx = new AudioContext();
   await audioCtx.audioWorklet.addModule('oscillator-worklet.js');
+  // Some browsers start AudioContext in a suspended state until resumed.
+  // Calling resume here ensures playback begins after the user click.
+  if (audioCtx.state === 'suspended') {
+    try {
+      await audioCtx.resume();
+    } catch (e) {
+      console.error('Failed to resume AudioContext', e);
+    }
+  }
   workletNode = new AudioWorkletNode(audioCtx, 'oscillator-generator', {
     outputChannelCount: [2]
   });
