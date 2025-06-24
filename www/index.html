@@ -146,30 +146,36 @@
   </div>
   <script src="app.js"></script>
   <script>
-    // Basic feedback for play button
-    const connectBtn = document.getElementById('connect');
-    const stopBtn = document.getElementById('stop');
-    const statusDiv = document.getElementById('status');
-    connectBtn.addEventListener('click', () => {
-      statusDiv.textContent = "Playing...";
-    });
-    stopBtn.addEventListener('click', () => {
-      statusDiv.textContent = "Stopped";
-    });
-
-    // Update text outputs for sliders
-    ['carrier', 'beat', 'phase', 'amplitude'].forEach((id) => {
-      const slider = document.getElementById(id);
-      const out = document.getElementById(id + '_val');
-      if (slider && out) {
-        out.textContent = slider.value;
-        slider.addEventListener('input', () => {
-          out.textContent = slider.value;
-          if (typeof sendParams === 'function') {
-            sendParams();
-          }
+    window.addEventListener('DOMContentLoaded', () => {
+      // Basic feedback for play button
+      const connectBtn = document.getElementById('connect');
+      const stopBtn = document.getElementById('stop');
+      const statusDiv = document.getElementById('status');
+      if (connectBtn) {
+        connectBtn.addEventListener('click', () => {
+          statusDiv.textContent = 'Playing...';
         });
       }
+      if (stopBtn) {
+        stopBtn.addEventListener('click', () => {
+          statusDiv.textContent = 'Stopped';
+        });
+      }
+
+      // Update text outputs for sliders
+      ['carrier', 'beat', 'phase', 'amplitude'].forEach((id) => {
+        const slider = document.getElementById(id);
+        const out = document.getElementById(id + '_val');
+        if (slider && out) {
+          out.textContent = slider.value;
+          slider.addEventListener('input', () => {
+            out.textContent = slider.value;
+            if (typeof sendParams === 'function') {
+              sendParams();
+            }
+          });
+        }
+      });
     });
   </script>
 </body>

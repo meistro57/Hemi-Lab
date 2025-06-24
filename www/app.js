@@ -151,11 +151,14 @@ function drawScope() {
   animId = requestAnimationFrame(drawScope);
 }
 
-document.getElementById('connect').onclick = () => start();
-const stopBtn = document.getElementById('stop');
-if (stopBtn) {
-  stopBtn.onclick = () => stop();
-}
+// Attach UI event handlers after the DOM has loaded to avoid null lookups
+window.addEventListener('DOMContentLoaded', () => {
+  const playBtn = document.getElementById('connect');
+  if (playBtn) playBtn.addEventListener('click', () => start());
+
+  const stopBtn = document.getElementById('stop');
+  if (stopBtn) stopBtn.addEventListener('click', () => stop());
+});
 
 async function loadPresets() {
   try {
