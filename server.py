@@ -8,7 +8,13 @@ import json
 import websockets
 import argparse
 import numpy as np
-import sounddevice as sd
+try:
+    import sounddevice as sd  # optional, used for the --test-sweep command
+    SOUNDDEVICE_AVAILABLE = True
+except Exception as e:  # pragma: no cover - depends on system libs
+    print(f"sounddevice unavailable: {e}")
+    sd = None
+    SOUNDDEVICE_AVAILABLE = False
 import http.server
 import threading
 import functools
@@ -61,6 +67,9 @@ def validate_params(params):
 
 def play_test_sweep(duration=5.0, start=200.0, end=800.0):
     """Play a short frequency sweep for quick audio testing."""
+    if not SOUNDDEVICE_AVAILABLE:
+        print("sounddevice not available; skipping test sweep")
+        return
     t = np.linspace(0, duration, int(SAMPLE_RATE * duration), endpoint=False)
     freqs = np.linspace(start, end, t.size)
     wave = np.sin(2 * np.pi * freqs * t)
@@ -197,6 +206,7 @@ if __name__ == '__main__':
 
     if args.test_sweep:
         play_test_sweep()
+        raise SystemExit(0)
     else:
         httpd = start_static_server(port=args.http_port)
         try:
