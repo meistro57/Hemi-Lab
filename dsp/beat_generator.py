@@ -65,7 +65,6 @@ class BeatGenerator:
         return out, state
 
     def _lowpass(self, arr, cutoff, state):
-        xp = self._xp()
         if self.device == 'gpu':
             cpu_arr, state = self._lowpass_cpu(cp.asnumpy(arr), cutoff, state)
             return cp.asarray(cpu_arr), state
