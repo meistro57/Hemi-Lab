@@ -15,7 +15,11 @@ async function start() {
     audioCtx = new AudioContext();
     
     // Load the enhanced worklet
-    await audioCtx.audioWorklet.addModule('enhanced-oscillator-worklet.js');
+    // Load the worklet module. This file registers the
+    // 'enhanced-oscillator-generator' processor.
+    // The original path pointed to a non-existent file which
+    // caused a DOMException when starting audio.
+    await audioCtx.audioWorklet.addModule('oscillator-worklet.js');
     
     // Resume context if suspended
     if (audioCtx.state === 'suspended') {
