@@ -1,3 +1,6 @@
+I have ditched this repo and started over ... https://github.com/meistro57/Hemi-Lab_Ultra  
+
+
 # HEMI-LAB ULTRA++
 
 🧠 Real-Time GPU-Accelerated Brainwave Entrainment Platform
