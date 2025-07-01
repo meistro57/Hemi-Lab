@@ -91,6 +91,8 @@ def start_static_server(port=8000, directory="www"):
     print(
         f"HTTP server running on http://0.0.0.0:{port} serving {os.path.relpath(directory)}/"
     )
+    if DEBUG:
+        print("Static file server started")
     return httpd
 
 async def audio_stream(websocket):
@@ -156,10 +158,15 @@ async def audio_stream(websocket):
                     filter_cutoff=params.get('filter_cutoff'),
                     waveform=params.get('waveform', 'sine'),
                 )
+                if DEBUG:
+                    max_amp = float(np.max(np.abs(block)))
+                    print(f"Generated block max amplitude: {max_amp:.3f}")
                 await asyncio.gather(
                     websocket.send(pack_audio(block)),
                     asyncio.sleep(BLOCK_SIZE / SAMPLE_RATE)
                 )
+                if DEBUG:
+                    print("Sent audio block to client")
             except websockets.ConnectionClosed as e:
                 print(f"Connection closed: {e}")
                 break
@@ -168,10 +175,14 @@ async def audio_stream(websocket):
 
 async def handler(websocket):
     clients.add(websocket)
+    if DEBUG:
+        print(f"Client connected: {websocket.remote_address}")
     try:
         await audio_stream(websocket)
     finally:
         clients.discard(websocket)  # discard avoids KeyError if already removed
+        if DEBUG:
+            print(f"Client disconnected: {websocket.remote_address}")
 
 async def main(host='0.0.0.0', port=8765):
     # Host/port validation for extra safety
@@ -187,6 +198,8 @@ async def main(host='0.0.0.0', port=8765):
 
     async with websockets.serve(handler, host, port, max_size=None):
         print(f"Server running on ws://{host}:{port}")
+        if DEBUG:
+            print("WebSocket server started")
         await asyncio.Future()
 
 if __name__ == '__main__':
